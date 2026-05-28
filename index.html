@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Twenty One Pilots 1-Second Song Guess</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -23,7 +21,7 @@
 
     .app {
       width: 100%;
-      max-width: 780px;
+      max-width: 900px;
       background: rgba(15, 15, 15, 0.94);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 26px;
@@ -36,6 +34,11 @@
       margin: 0 0 10px;
       font-size: clamp(2rem, 5vw, 3.5rem);
       letter-spacing: -1px;
+    }
+
+    h2 {
+      margin: 30px 0 12px;
+      font-size: 1.4rem;
     }
 
     .subtitle {
@@ -64,9 +67,7 @@
       margin-bottom: 4px;
     }
 
-    .score-card strong {
-      font-size: 1.35rem;
-    }
+    .score-card strong { font-size: 1.35rem; }
 
     .hidden-player {
       width: 1px;
@@ -103,7 +104,7 @@
       font-weight: bold;
     }
 
-    .controls {
+    .controls, .save-score {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -111,21 +112,22 @@
       margin-bottom: 20px;
     }
 
-    button {
+    button, input {
       border: 0;
       border-radius: 999px;
       padding: 13px 20px;
       font-weight: 800;
+      font-size: 0.98rem;
+    }
+
+    button {
       cursor: pointer;
       color: #111;
       background: #ffd75e;
       transition: transform 0.15s ease, opacity 0.15s ease;
-      font-size: 0.98rem;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-    }
+    button:hover { transform: translateY(-1px); }
 
     button:disabled {
       opacity: 0.45;
@@ -133,9 +135,15 @@
       transform: none;
     }
 
-    .secondary {
-      background: #ffffff;
+    input {
+      min-width: 220px;
+      background: #fff;
+      color: #111;
+      outline: none;
     }
+
+    .secondary { background: #ffffff; }
+    .danger { background: #ff8a8a; }
 
     .answers {
       display: grid;
@@ -153,13 +161,8 @@
       min-height: 58px;
     }
 
-    .answer.correct {
-      background: #1f8f4d;
-    }
-
-    .answer.wrong {
-      background: #9f2c2c;
-    }
+    .answer.correct { background: #1f8f4d; }
+    .answer.wrong { background: #9f2c2c; }
 
     .reveal {
       margin-top: 18px;
@@ -167,6 +170,23 @@
       min-height: 26px;
       font-weight: 700;
     }
+
+    .leaderboard {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      margin-top: 12px;
+    }
+
+    .leaderboard th, .leaderboard td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: left;
+    }
+
+    .leaderboard th { color: #ffd75e; }
 
     .setup-note {
       margin-top: 24px;
@@ -176,17 +196,10 @@
     }
 
     @media (max-width: 650px) {
-      .app {
-        padding: 20px;
-      }
-
-      .scoreboard {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .answers {
-        grid-template-columns: 1fr;
-      }
+      .app { padding: 20px; }
+      .scoreboard { grid-template-columns: repeat(2, 1fr); }
+      .answers { grid-template-columns: 1fr; }
+      .leaderboard th, .leaderboard td { font-size: 0.85rem; padding: 9px; }
     }
   </style>
 </head>
@@ -196,27 +209,13 @@
     <p class="subtitle">Hear one second of audio only. Guess fast for more points.</p>
 
     <section class="scoreboard">
-      <div class="score-card">
-        <span>Score</span>
-        <strong id="score">0</strong>
-      </div>
-      <div class="score-card">
-        <span>Round</span>
-        <strong id="round">0</strong>
-      </div>
-      <div class="score-card">
-        <span>Streak</span>
-        <strong id="streak">0</strong>
-      </div>
-      <div class="score-card">
-        <span>Last Points</span>
-        <strong id="lastPoints">0</strong>
-      </div>
+      <div class="score-card"><span>Score</span><strong id="score">0</strong></div>
+      <div class="score-card"><span>Round</span><strong id="round">0</strong></div>
+      <div class="score-card"><span>Streak</span><strong id="streak">0</strong></div>
+      <div class="score-card"><span>Last Points</span><strong id="lastPoints">0</strong></div>
     </section>
 
-    <div class="hidden-player">
-      <div id="player"></div>
-    </div>
+    <div class="hidden-player"><div id="player"></div></div>
 
     <section class="listen-box">
       <div class="status" id="status">Loading YouTube audio...</div>
@@ -232,26 +231,153 @@
     </div>
 
     <section class="answers" id="answers"></section>
-
     <div class="reveal" id="reveal"></div>
 
+    <h2>Save High Score</h2>
+    <div class="save-score">
+      <input id="playerName" maxlength="18" placeholder="Your name" />
+      <button id="saveScoreBtn">Save Score</button>
+      <button id="resetGameBtn" class="secondary">Reset Game</button>
+      <button id="clearScoresBtn" class="danger">Clear Scores</button>
+    </div>
+
+    <h2>Local Leaderboard</h2>
+    <table class="leaderboard">
+      <thead>
+        <tr><th>#</th><th>Name</th><th>Score</th><th>Date</th></tr>
+      </thead>
+      <tbody id="leaderboardBody"></tbody>
+    </table>
+
     <p class="setup-note">
-      This uses a hidden YouTube embed so the video does not spoil the answer. It does not download, store, or redistribute music files.
+      This uses a hidden YouTube embed so the video does not spoil the answer. GitHub Pages can save this leaderboard locally in the browser. For a public online leaderboard, connect Firebase or Supabase.
     </p>
   </main>
 
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
+    /*
+      IMPORTANT ABOUT THE SONG LIST:
+      - The quiz includes the full title pool from major albums, non-album singles, and common covers/features.
+      - Only songs with a videoId can be played.
+      - Add official YouTube video IDs where videoId is blank.
+      - Blank IDs stay in the database but are skipped for audio rounds.
+    */
+
     const songs = [
-      { title: "Stressed Out", videoId: "pXRviuL6vMY", start: 15 },
-      { title: "Ride", videoId: "Pw-0pbY9JeU", start: 23 },
-      { title: "Heathens", videoId: "UprcpdwuwCg", start: 18 },
-      { title: "Tear in My Heart", videoId: "nky4me4NP70", start: 28 },
-      { title: "Jumpsuit", videoId: "UOUBW8bkjQ4", start: 35 },
-      { title: "Chlorine", videoId: "eJnQBXmZ7Ek", start: 42 },
-      { title: "The Outside", videoId: "eNcvblM8-_o", start: 33 },
-      { title: "Overcompensate", videoId: "53tgVlXBZVg", start: 31 }
+      // Twenty One Pilots, self-titled
+      { title: "Implicit Demand for Proof", album: "Twenty One Pilots", videoId: "", start: 20 },
+      { title: "Fall Away", album: "Twenty One Pilots", videoId: "", start: 25 },
+      { title: "The Pantaloon", album: "Twenty One Pilots", videoId: "", start: 20 },
+      { title: "Addict With a Pen", album: "Twenty One Pilots", videoId: "", start: 35 },
+      { title: "Friend, Please", album: "Twenty One Pilots", videoId: "", start: 35 },
+      { title: "March to the Sea", album: "Twenty One Pilots", videoId: "", start: 45 },
+      { title: "Johnny Boy", album: "Twenty One Pilots", videoId: "", start: 25 },
+      { title: "Oh Ms Believer", album: "Twenty One Pilots", videoId: "", start: 20 },
+      { title: "Air Catcher", album: "Twenty One Pilots", videoId: "", start: 28 },
+      { title: "Trapdoor", album: "Twenty One Pilots", videoId: "", start: 22 },
+      { title: "A Car, a Torch, a Death", album: "Twenty One Pilots", videoId: "", start: 35 },
+      { title: "Taxi Cab", album: "Twenty One Pilots", videoId: "", start: 42 },
+      { title: "Before You Start Your Day", album: "Twenty One Pilots", videoId: "", start: 22 },
+      { title: "Isle of Flightless Birds", album: "Twenty One Pilots", videoId: "", start: 30 },
+
+      // Regional at Best
+      { title: "Guns for Hands", album: "Regional at Best / Vessel", videoId: "Pmv8aQKO6k0", start: 35 },
+      { title: "Holding On to You", album: "Regional at Best / Vessel", videoId: "ktBMxkLUIwY", start: 34 },
+      { title: "Ode to Sleep", album: "Regional at Best / Vessel", videoId: "2OnO3UXFZdE", start: 30 },
+      { title: "Slowtown", album: "Regional at Best", videoId: "", start: 25 },
+      { title: "Car Radio", album: "Regional at Best / Vessel", videoId: "92XVwY54h5k", start: 46 },
+      { title: "Forest", album: "Regional at Best", videoId: "", start: 30 },
+      { title: "Glowing Eyes", album: "Regional at Best", videoId: "", start: 30 },
+      { title: "Kitchen Sink", album: "Regional at Best", videoId: "", start: 50 },
+      { title: "Anathema", album: "Regional at Best", videoId: "", start: 32 },
+      { title: "Lovely", album: "Regional at Best / Vessel Bonus", videoId: "", start: 25 },
+      { title: "Ruby", album: "Regional at Best", videoId: "", start: 25 },
+      { title: "Trees", album: "Regional at Best / Vessel", videoId: "", start: 38 },
+      { title: "Be Concerned", album: "Regional at Best", videoId: "", start: 28 },
+      { title: "Clear", album: "Regional at Best", videoId: "", start: 25 },
+
+      // Vessel
+      { title: "Migraine", album: "Vessel", videoId: "Bs92ejAGLdw", start: 28 },
+      { title: "House of Gold", album: "Vessel", videoId: "mDyxykpYeu8", start: 18 },
+      { title: "Semi-Automatic", album: "Vessel", videoId: "", start: 24 },
+      { title: "Screen", album: "Vessel", videoId: "", start: 34 },
+      { title: "The Run and Go", album: "Vessel", videoId: "", start: 34 },
+      { title: "Fake You Out", album: "Vessel", videoId: "", start: 30 },
+      { title: "Truce", album: "Vessel", videoId: "eCeBNwBUkcI", start: 20 },
+
+      // Blurryface
+      { title: "Heavydirtysoul", album: "Blurryface", videoId: "r_9Kf0D5BTs", start: 28 },
+      { title: "Stressed Out", album: "Blurryface", videoId: "pXRviuL6vMY", start: 15 },
+      { title: "Ride", album: "Blurryface", videoId: "Pw-0pbY9JeU", start: 23 },
+      { title: "Fairly Local", album: "Blurryface", videoId: "HDI9inno86U", start: 20 },
+      { title: "Tear in My Heart", album: "Blurryface", videoId: "nky4me4NP70", start: 28 },
+      { title: "Lane Boy", album: "Blurryface", videoId: "ywvRgGAd2XI", start: 30 },
+      { title: "The Judge", album: "Blurryface", videoId: "", start: 30 },
+      { title: "Doubt", album: "Blurryface", videoId: "", start: 30 },
+      { title: "Polarize", album: "Blurryface", videoId: "", start: 30 },
+      { title: "We Don't Believe What's on TV", album: "Blurryface", videoId: "zZEumf7RowI", start: 20 },
+      { title: "Message Man", album: "Blurryface", videoId: "", start: 26 },
+      { title: "Hometown", album: "Blurryface", videoId: "", start: 30 },
+      { title: "Not Today", album: "Blurryface", videoId: "", start: 30 },
+      { title: "Goner", album: "Blurryface", videoId: "3J5mE-J1WLk", start: 30 },
+
+      // Trench
+      { title: "Jumpsuit", album: "Trench", videoId: "UOUBW8bkjQ4", start: 35 },
+      { title: "Levitate", album: "Trench", videoId: "uv_1AKKKJnk", start: 18 },
+      { title: "Morph", album: "Trench", videoId: "OmL9TqTFIAc", start: 30 },
+      { title: "My Blood", album: "Trench", videoId: "8mn-FFjIbo8", start: 35 },
+      { title: "Chlorine", album: "Trench", videoId: "eJnQBXmZ7Ek", start: 42 },
+      { title: "Smithereens", album: "Trench", videoId: "", start: 24 },
+      { title: "Neon Gravestones", album: "Trench", videoId: "", start: 42 },
+      { title: "The Hype", album: "Trench", videoId: "IO9XlQrEt2Y", start: 32 },
+      { title: "Nico and the Niners", album: "Trench", videoId: "hMAPyGoqQVw", start: 24 },
+      { title: "Cut My Lip", album: "Trench", videoId: "", start: 30 },
+      { title: "Bandito", album: "Trench", videoId: "", start: 50 },
+      { title: "Pet Cheetah", album: "Trench", videoId: "", start: 30 },
+      { title: "Legend", album: "Trench", videoId: "", start: 30 },
+      { title: "Leave the City", album: "Trench", videoId: "", start: 35 },
+
+      // Scaled and Icy
+      { title: "Good Day", album: "Scaled and Icy", videoId: "", start: 20 },
+      { title: "Choker", album: "Scaled and Icy", videoId: "2sBRnnnZyFw", start: 25 },
+      { title: "Shy Away", album: "Scaled and Icy", videoId: "3sO-Y1Zbft4", start: 20 },
+      { title: "The Outside", album: "Scaled and Icy", videoId: "eNcvblM8-_o", start: 33 },
+      { title: "Saturday", album: "Scaled and Icy", videoId: "FiXVRdotCEk", start: 20 },
+      { title: "Never Take It", album: "Scaled and Icy", videoId: "", start: 30 },
+      { title: "Mulberry Street", album: "Scaled and Icy", videoId: "", start: 28 },
+      { title: "Formidable", album: "Scaled and Icy", videoId: "", start: 26 },
+      { title: "Bounce Man", album: "Scaled and Icy", videoId: "", start: 25 },
+      { title: "No Chances", album: "Scaled and Icy", videoId: "", start: 30 },
+      { title: "Redecorate", album: "Scaled and Icy", videoId: "", start: 30 },
+
+      // Clancy
+      { title: "Overcompensate", album: "Clancy", videoId: "53tgVlXBZVg", start: 31 },
+      { title: "Next Semester", album: "Clancy", videoId: "a5i-KdUQ47o", start: 24 },
+      { title: "Backslide", album: "Clancy", videoId: "YAmLMohrus4", start: 25 },
+      { title: "Midwest Indigo", album: "Clancy", videoId: "", start: 24 },
+      { title: "Routines in the Night", album: "Clancy", videoId: "", start: 26 },
+      { title: "Vignette", album: "Clancy", videoId: "", start: 25 },
+      { title: "The Craving", album: "Clancy", videoId: "", start: 20 },
+      { title: "Lavish", album: "Clancy", videoId: "", start: 25 },
+      { title: "Navigating", album: "Clancy", videoId: "", start: 28 },
+      { title: "Snap Back", album: "Clancy", videoId: "", start: 25 },
+      { title: "Oldies Station", album: "Clancy", videoId: "", start: 28 },
+      { title: "At the Risk of Feeling Dumb", album: "Clancy", videoId: "", start: 25 },
+      { title: "Paladin Strait", album: "Clancy", videoId: "", start: 45 },
+
+      // Non-album singles, covers, soundtrack, extras
+      { title: "Level of Concern", album: "Single", videoId: "loOWKm8GW6A", start: 22 },
+      { title: "Christmas Saves the Year", album: "Single", videoId: "", start: 25 },
+      { title: "Heathens", album: "Suicide Squad Soundtrack", videoId: "UprcpdwuwCg", start: 18 },
+      { title: "Cancer", album: "Cover", videoId: "", start: 24 },
+      { title: "The Line", album: "Arcane Soundtrack", videoId: "", start: 25 },
+      { title: "Can't Help Falling in Love", album: "Cover", videoId: "", start: 20 },
+      { title: "Jar of Hearts", album: "Cover", videoId: "", start: 20 },
+      { title: "Mad World", album: "Cover", videoId: "", start: 20 }
     ];
+
+    const playableSongs = songs.filter(song => song.videoId && song.videoId.trim() !== "");
 
     let player;
     let currentSong = null;
@@ -278,27 +404,32 @@
     const playClipBtn = document.getElementById("playClipBtn");
     const replayClipBtn = document.getElementById("replayClipBtn");
     const revealBtn = document.getElementById("revealBtn");
+    const saveScoreBtn = document.getElementById("saveScoreBtn");
+    const resetGameBtn = document.getElementById("resetGameBtn");
+    const clearScoresBtn = document.getElementById("clearScoresBtn");
+    const playerNameInput = document.getElementById("playerName");
+    const leaderboardBody = document.getElementById("leaderboardBody");
 
     function onYouTubeIframeAPIReady() {
+      if (playableSongs.length === 0) {
+        statusEl.textContent = "No playable songs yet. Add YouTube video IDs.";
+        return;
+      }
+
       player = new YT.Player("player", {
         height: "1",
         width: "1",
-        videoId: songs[0].videoId,
-        playerVars: {
-          controls: 0,
-          modestbranding: 1,
-          rel: 0,
-          playsinline: 1,
-          disablekb: 1
-        },
+        videoId: playableSongs[0].videoId,
+        playerVars: { controls: 0, modestbranding: 1, rel: 0, playsinline: 1, disablekb: 1 },
         events: {
           onReady: () => {
-            statusEl.textContent = "Ready. Start a new song.";
+            statusEl.textContent = `Ready. ${playableSongs.length} playable songs loaded.`;
             newRoundBtn.disabled = false;
             newRound();
           },
           onError: () => {
-            statusEl.textContent = "This YouTube video cannot play embedded. Replace its video ID.";
+            statusEl.textContent = "This YouTube video cannot play embedded. New song loaded.";
+            setTimeout(newRound, 900);
           }
         }
       });
@@ -311,13 +442,8 @@
       lastPointsEl.textContent = lastPoints;
     }
 
-    function shuffle(array) {
-      return [...array].sort(() => Math.random() - 0.5);
-    }
-
-    function pickRandomSong() {
-      return songs[Math.floor(Math.random() * songs.length)];
-    }
+    function shuffle(array) { return [...array].sort(() => Math.random() - 0.5); }
+    function pickRandomSong() { return playableSongs[Math.floor(Math.random() * playableSongs.length)]; }
 
     function getAnswerChoices(correctSong) {
       const wrongChoices = shuffle(songs.filter(song => song.title !== correctSong.title)).slice(0, 3);
@@ -341,10 +467,7 @@
       statusEl.textContent = "Press Play 1 Second. No video will be shown.";
       updateScoreboard();
 
-      player.cueVideoById({
-        videoId: currentSong.videoId,
-        startSeconds: currentSong.start
-      });
+      player.cueVideoById({ videoId: currentSong.videoId, startSeconds: currentSong.start });
 
       playClipBtn.disabled = false;
       replayClipBtn.disabled = true;
@@ -359,9 +482,7 @@
       clearTimeout(stopTimer);
       clearInterval(timerInterval);
 
-      if (isReplay) {
-        replayCount += 1;
-      }
+      if (isReplay) replayCount += 1;
 
       statusEl.textContent = isReplay ? "Replaying with penalty..." : "Playing one second...";
       playClipBtn.disabled = true;
@@ -399,15 +520,12 @@
     }
 
     function setAnswersDisabled(disabled) {
-      document.querySelectorAll(".answer").forEach(btn => {
-        btn.disabled = disabled;
-      });
+      document.querySelectorAll(".answer").forEach(btn => btn.disabled = disabled);
     }
 
     function renderAnswers() {
       answersEl.innerHTML = "";
       const choices = getAnswerChoices(currentSong);
-
       choices.forEach(choice => {
         const btn = document.createElement("button");
         btn.className = "answer";
@@ -426,14 +544,11 @@
 
       const seconds = answerStartTime ? (Date.now() - answerStartTime) / 1000 : 0;
       timerEl.textContent = seconds.toFixed(2);
-
       const isCorrect = selectedTitle === currentSong.title;
 
       document.querySelectorAll(".answer").forEach(btn => {
         btn.disabled = true;
-        if (btn.textContent === currentSong.title) {
-          btn.classList.add("correct");
-        }
+        if (btn.textContent === currentSong.title) btn.classList.add("correct");
       });
 
       if (isCorrect) {
@@ -448,7 +563,7 @@
         statusEl.textContent = "Wrong. +0 points";
       }
 
-      revealEl.textContent = `Answer: ${currentSong.title}`;
+      revealEl.textContent = `Answer: ${currentSong.title} — ${currentSong.album}`;
       playClipBtn.disabled = true;
       replayClipBtn.disabled = true;
       updateScoreboard();
@@ -463,14 +578,12 @@
 
       lastPoints = 0;
       streak = 0;
-      revealEl.textContent = `Answer: ${currentSong.title}`;
+      revealEl.textContent = `Answer: ${currentSong.title} — ${currentSong.album}`;
       statusEl.textContent = "Answer revealed. +0 points";
 
       document.querySelectorAll(".answer").forEach(btn => {
         btn.disabled = true;
-        if (btn.textContent === currentSong.title) {
-          btn.classList.add("correct");
-        }
+        if (btn.textContent === currentSong.title) btn.classList.add("correct");
       });
 
       playClipBtn.disabled = true;
@@ -478,10 +591,68 @@
       updateScoreboard();
     }
 
+    function resetGame() {
+      score = 0;
+      round = 0;
+      streak = 0;
+      lastPoints = 0;
+      updateScoreboard();
+      newRound();
+    }
+
+    function getLeaderboard() {
+      return JSON.parse(localStorage.getItem("topOneSecondLeaderboard") || "[]");
+    }
+
+    function saveLeaderboard(scores) {
+      localStorage.setItem("topOneSecondLeaderboard", JSON.stringify(scores));
+    }
+
+    function saveScore() {
+      const name = playerNameInput.value.trim() || "Anonymous";
+      const scores = getLeaderboard();
+      scores.push({ name, score, date: new Date().toLocaleDateString() });
+      scores.sort((a, b) => b.score - a.score);
+      saveLeaderboard(scores.slice(0, 10));
+      renderLeaderboard();
+    }
+
+    function renderLeaderboard() {
+      const scores = getLeaderboard();
+      leaderboardBody.innerHTML = "";
+
+      if (scores.length === 0) {
+        leaderboardBody.innerHTML = `<tr><td colspan="4">No scores saved yet.</td></tr>`;
+        return;
+      }
+
+      scores.forEach((entry, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${index + 1}</td><td>${escapeHtml(entry.name)}</td><td>${entry.score}</td><td>${entry.date}</td>`;
+        leaderboardBody.appendChild(row);
+      });
+    }
+
+    function clearScores() {
+      localStorage.removeItem("topOneSecondLeaderboard");
+      renderLeaderboard();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     newRoundBtn.addEventListener("click", newRound);
     playClipBtn.addEventListener("click", () => playOneSecond(false));
     replayClipBtn.addEventListener("click", () => playOneSecond(true));
     revealBtn.addEventListener("click", revealAnswer);
+    saveScoreBtn.addEventListener("click", saveScore);
+    resetGameBtn.addEventListener("click", resetGame);
+    clearScoresBtn.addEventListener("click", clearScores);
+
+    renderLeaderboard();
   </script>
 </body>
 </html>
