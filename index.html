@@ -13,42 +13,42 @@
       margin: 0;
       min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
-      background: radial-gradient(circle at top, #2b2b2b, #080808 65%);
+      background: radial-gradient(circle at top, #2a2a2a, #070707 65%);
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 22px;
     }
 
     .app {
       width: 100%;
-      max-width: 760px;
-      background: rgba(18, 18, 18, 0.92);
+      max-width: 780px;
+      background: rgba(15, 15, 15, 0.94);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px;
+      border-radius: 26px;
       padding: 28px;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 24px 90px rgba(0, 0, 0, 0.5);
       text-align: center;
     }
 
     h1 {
       margin: 0 0 10px;
-      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-size: clamp(2rem, 5vw, 3.5rem);
       letter-spacing: -1px;
     }
 
     .subtitle {
-      margin: 0 0 26px;
+      margin: 0 0 24px;
       color: #cfcfcf;
       line-height: 1.5;
     }
 
     .scoreboard {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
 
     .score-card {
@@ -60,32 +60,45 @@
     .score-card span {
       display: block;
       color: #aaa;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       margin-bottom: 4px;
     }
 
     .score-card strong {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
     }
 
-    .player-wrap {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #000;
-      border-radius: 18px;
+    .hidden-player {
+      width: 1px;
+      height: 1px;
+      opacity: 0;
       overflow: hidden;
-      margin-bottom: 22px;
-      position: relative;
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      pointer-events: none;
     }
 
-    #player {
-      width: 100%;
-      height: 100%;
+    .listen-box {
+      background: linear-gradient(135deg, rgba(255, 215, 94, 0.14), rgba(255, 255, 255, 0.06));
+      border: 1px solid rgba(255, 215, 94, 0.25);
+      border-radius: 22px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .big-timer {
+      font-size: clamp(2.8rem, 12vw, 6rem);
+      font-weight: 900;
+      letter-spacing: -4px;
+      line-height: 1;
+      margin: 10px 0;
+      color: #ffd75e;
     }
 
     .status {
       min-height: 28px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       color: #ffd75e;
       font-weight: bold;
     }
@@ -102,11 +115,12 @@
       border: 0;
       border-radius: 999px;
       padding: 13px 20px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       color: #111;
       background: #ffd75e;
       transition: transform 0.15s ease, opacity 0.15s ease;
+      font-size: 0.98rem;
     }
 
     button:hover {
@@ -151,6 +165,7 @@
       margin-top: 18px;
       color: #e5e5e5;
       min-height: 26px;
+      font-weight: 700;
     }
 
     .setup-note {
@@ -160,12 +175,15 @@
       line-height: 1.5;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 650px) {
       .app {
         padding: 20px;
       }
 
-      .scoreboard,
+      .scoreboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
       .answers {
         grid-template-columns: 1fr;
       }
@@ -175,7 +193,7 @@
 <body>
   <main class="app">
     <h1>1-Second Clique Quiz</h1>
-    <p class="subtitle">Press play, hear one second, then guess the Twenty One Pilots song.</p>
+    <p class="subtitle">Hear one second of audio only. Guess fast for more points.</p>
 
     <section class="scoreboard">
       <div class="score-card">
@@ -190,17 +208,26 @@
         <span>Streak</span>
         <strong id="streak">0</strong>
       </div>
+      <div class="score-card">
+        <span>Last Points</span>
+        <strong id="lastPoints">0</strong>
+      </div>
     </section>
 
-    <div class="player-wrap">
+    <div class="hidden-player">
       <div id="player"></div>
     </div>
 
-    <div class="status" id="status">Loading YouTube player...</div>
+    <section class="listen-box">
+      <div class="status" id="status">Loading YouTube audio...</div>
+      <div class="big-timer" id="timer">0.00</div>
+      <p class="subtitle">Timer starts after the 1-second clip plays.</p>
+    </section>
 
     <div class="controls">
       <button id="newRoundBtn" disabled>New Song</button>
       <button id="playClipBtn" class="secondary" disabled>Play 1 Second</button>
+      <button id="replayClipBtn" class="secondary" disabled>Replay Clip - Penalty</button>
       <button id="revealBtn" class="secondary" disabled>Reveal</button>
     </div>
 
@@ -209,27 +236,21 @@
     <div class="reveal" id="reveal"></div>
 
     <p class="setup-note">
-      This site uses YouTube embeds. It does not download, store, or redistribute music files.
-      Replace the video IDs in the song list with official uploads or videos you have permission to use.
+      This uses a hidden YouTube embed so the video does not spoil the answer. It does not download, store, or redistribute music files.
     </p>
   </main>
 
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    // IMPORTANT:
-    // Replace these YouTube IDs with official Twenty One Pilots videos or videos you have permission to embed.
-    // To get a video ID, copy the part after v= in a YouTube link.
-    // Example: https://www.youtube.com/watch?v=pXRviuL6vMY -> pXRviuL6vMY
-
     const songs = [
-      { title: "Stressed Out", videoId: "pXRviuL6vMY", start: 0 },
-      { title: "Ride", videoId: "Pw-0pbY9JeU", start: 0 },
-      { title: "Heathens", videoId: "UprcpdwuwCg", start: 0 },
-      { title: "Tear in My Heart", videoId: "nky4me4NP70", start: 0 },
-      { title: "Jumpsuit", videoId: "UOUBW8bkjQ4", start: 0 },
-      { title: "Chlorine", videoId: "eJnQBXmZ7Ek", start: 0 },
-      { title: "The Outside", videoId: "eNcvblM8-_o", start: 0 },
-      { title: "Overcompensate", videoId: "53tgVlXBZVg", start: 0 }
+      { title: "Stressed Out", videoId: "pXRviuL6vMY", start: 15 },
+      { title: "Ride", videoId: "Pw-0pbY9JeU", start: 23 },
+      { title: "Heathens", videoId: "UprcpdwuwCg", start: 18 },
+      { title: "Tear in My Heart", videoId: "nky4me4NP70", start: 28 },
+      { title: "Jumpsuit", videoId: "UOUBW8bkjQ4", start: 35 },
+      { title: "Chlorine", videoId: "eJnQBXmZ7Ek", start: 42 },
+      { title: "The Outside", videoId: "eNcvblM8-_o", start: 33 },
+      { title: "Overcompensate", videoId: "53tgVlXBZVg", start: 31 }
     ];
 
     let player;
@@ -237,23 +258,31 @@
     let score = 0;
     let round = 0;
     let streak = 0;
+    let lastPoints = 0;
     let answered = false;
+    let clipPlayed = false;
+    let replayCount = 0;
     let stopTimer = null;
+    let answerStartTime = null;
+    let timerInterval = null;
 
     const scoreEl = document.getElementById("score");
     const roundEl = document.getElementById("round");
     const streakEl = document.getElementById("streak");
+    const lastPointsEl = document.getElementById("lastPoints");
     const statusEl = document.getElementById("status");
+    const timerEl = document.getElementById("timer");
     const answersEl = document.getElementById("answers");
     const revealEl = document.getElementById("reveal");
     const newRoundBtn = document.getElementById("newRoundBtn");
     const playClipBtn = document.getElementById("playClipBtn");
+    const replayClipBtn = document.getElementById("replayClipBtn");
     const revealBtn = document.getElementById("revealBtn");
 
     function onYouTubeIframeAPIReady() {
       player = new YT.Player("player", {
-        height: "390",
-        width: "640",
+        height: "1",
+        width: "1",
         videoId: songs[0].videoId,
         playerVars: {
           controls: 0,
@@ -267,6 +296,9 @@
             statusEl.textContent = "Ready. Start a new song.";
             newRoundBtn.disabled = false;
             newRound();
+          },
+          onError: () => {
+            statusEl.textContent = "This YouTube video cannot play embedded. Replace its video ID.";
           }
         }
       });
@@ -276,6 +308,7 @@
       scoreEl.textContent = score;
       roundEl.textContent = round;
       streakEl.textContent = streak;
+      lastPointsEl.textContent = lastPoints;
     }
 
     function shuffle(array) {
@@ -293,11 +326,19 @@
 
     function newRound() {
       clearTimeout(stopTimer);
+      clearInterval(timerInterval);
+
       currentSong = pickRandomSong();
       answered = false;
+      clipPlayed = false;
+      replayCount = 0;
+      answerStartTime = null;
+      lastPoints = 0;
       round += 1;
+
       revealEl.textContent = "";
-      statusEl.textContent = "Listen closely. You only get one second.";
+      timerEl.textContent = "0.00";
+      statusEl.textContent = "Press Play 1 Second. No video will be shown.";
       updateScoreboard();
 
       player.cueVideoById({
@@ -306,23 +347,61 @@
       });
 
       playClipBtn.disabled = false;
+      replayClipBtn.disabled = true;
       revealBtn.disabled = false;
       renderAnswers();
+      setAnswersDisabled(true);
     }
 
-    function playOneSecond() {
-      if (!currentSong || !player) return;
+    function playOneSecond(isReplay = false) {
+      if (!currentSong || !player || answered) return;
 
       clearTimeout(stopTimer);
-      statusEl.textContent = "Playing...";
+      clearInterval(timerInterval);
+
+      if (isReplay) {
+        replayCount += 1;
+      }
+
+      statusEl.textContent = isReplay ? "Replaying with penalty..." : "Playing one second...";
+      playClipBtn.disabled = true;
+      replayClipBtn.disabled = true;
+      setAnswersDisabled(true);
 
       player.seekTo(currentSong.start, true);
       player.playVideo();
 
       stopTimer = setTimeout(() => {
         player.pauseVideo();
-        statusEl.textContent = "Make your guess.";
+        clipPlayed = true;
+        answerStartTime = Date.now();
+        statusEl.textContent = "Guess now. Faster answers score higher.";
+        setAnswersDisabled(false);
+        replayClipBtn.disabled = false;
+        startAnswerTimer();
       }, 1000);
+    }
+
+    function startAnswerTimer() {
+      timerInterval = setInterval(() => {
+        if (!answerStartTime || answered) return;
+        const seconds = (Date.now() - answerStartTime) / 1000;
+        timerEl.textContent = seconds.toFixed(2);
+      }, 50);
+    }
+
+    function calculatePoints(seconds) {
+      const basePoints = 1000;
+      const timePenalty = Math.floor(seconds * 45);
+      const replayPenalty = replayCount * 250;
+      const streakBonus = streak * 50;
+      return Math.max(100, basePoints - timePenalty - replayPenalty + streakBonus);
+    }
+
+    function setAnswersDisabled(disabled) {
+      document.querySelectorAll(".answer").forEach(btn => {
+        btn.disabled = disabled;
+      });
     }
 
     function renderAnswers() {
@@ -339,9 +418,15 @@
     }
 
     function checkAnswer(selectedTitle, button) {
-      if (answered) return;
+      if (answered || !clipPlayed) return;
 
       answered = true;
+      clearInterval(timerInterval);
+      player.pauseVideo();
+
+      const seconds = answerStartTime ? (Date.now() - answerStartTime) / 1000 : 0;
+      timerEl.textContent = seconds.toFixed(2);
+
       const isCorrect = selectedTitle === currentSong.title;
 
       document.querySelectorAll(".answer").forEach(btn => {
@@ -352,25 +437,34 @@
       });
 
       if (isCorrect) {
-        score += 1;
+        lastPoints = calculatePoints(seconds);
+        score += lastPoints;
         streak += 1;
-        statusEl.textContent = "Correct!";
+        statusEl.textContent = `Correct! +${lastPoints} points`;
       } else {
+        lastPoints = 0;
         streak = 0;
         button.classList.add("wrong");
-        statusEl.textContent = "Wrong.";
+        statusEl.textContent = "Wrong. +0 points";
       }
 
       revealEl.textContent = `Answer: ${currentSong.title}`;
+      playClipBtn.disabled = true;
+      replayClipBtn.disabled = true;
       updateScoreboard();
     }
 
     function revealAnswer() {
       if (!currentSong) return;
+
       answered = true;
+      clearInterval(timerInterval);
+      player.pauseVideo();
+
+      lastPoints = 0;
       streak = 0;
       revealEl.textContent = `Answer: ${currentSong.title}`;
-      statusEl.textContent = "Answer revealed.";
+      statusEl.textContent = "Answer revealed. +0 points";
 
       document.querySelectorAll(".answer").forEach(btn => {
         btn.disabled = true;
@@ -379,11 +473,14 @@
         }
       });
 
+      playClipBtn.disabled = true;
+      replayClipBtn.disabled = true;
       updateScoreboard();
     }
 
     newRoundBtn.addEventListener("click", newRound);
-    playClipBtn.addEventListener("click", playOneSecond);
+    playClipBtn.addEventListener("click", () => playOneSecond(false));
+    replayClipBtn.addEventListener("click", () => playOneSecond(true));
     revealBtn.addEventListener("click", revealAnswer);
   </script>
 </body>
