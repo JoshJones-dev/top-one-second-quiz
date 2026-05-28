@@ -215,8 +215,8 @@
       <div class="score-card"><span>Last Points</span><strong id="lastPoints">0</strong></div>
       <div class="score-card"><span>Total Songs</span><strong id="totalSongs">0</strong></div>
       <div class="score-card"><span>Playable Songs</span><strong id="playableSongs">0</strong></div>
-      <div class="score-card"><span>Cycle Progress</span><strong id="cycleProgressText">0 / 0</strong></div>
-      <div class="score-card"><span>Cycles Done</span><strong id="cyclesDone">0</strong></div>
+      <div class="score-card"><span>Songs Played</span><strong id="cycleProgressText">0 / 0</strong></div>
+      <div class="score-card"><span>Songs Left</span><strong id="songsLeft">0</strong></div>
     </section>
 
     <div style="width:100%;height:18px;background:rgba(255,255,255,0.12);border-radius:999px;overflow:hidden;margin:-8px 0 22px;">
@@ -390,8 +390,8 @@
     let player;
     let currentSong = null;
     let songDeck = [];
-    let usedThisCycle = 0;
-    let cyclesDone = 0;
+    let songsPlayed = 0;
+    let gameOver = false;
     let score = 0;
     let round = 0;
     let streak = 0;
@@ -410,7 +410,7 @@
     const totalSongsEl = document.getElementById("totalSongs");
     const playableSongsEl = document.getElementById("playableSongs");
     const cycleProgressTextEl = document.getElementById("cycleProgressText");
-    const cyclesDoneEl = document.getElementById("cyclesDone");
+    const songsLeftEl = document.getElementById("songsLeft");
     const progressBarEl = document.getElementById("progressBar");
     const statusEl = document.getElementById("status");
     const timerEl = document.getElementById("timer");
@@ -458,24 +458,40 @@
       lastPointsEl.textContent = lastPoints;
       totalSongsEl.textContent = songs.length;
       playableSongsEl.textContent = playableSongs.length;
-      cycleProgressTextEl.textContent = `${usedThisCycle} / ${playableSongs.length}`;
-      cyclesDoneEl.textContent = cyclesDone;
+      cycleProgressTextEl.textContent = `${songsPlayed} / ${playableSongs.length}`;
+      songsLeftEl.textContent = Math.max(playableSongs.length - songsPlayed, 0);
 
-      const percent = playableSongs.length > 0 ? (usedThisCycle / playableSongs.length) * 100 : 0;
+      const percent = playableSongs.length > 0 ? (songsPlayed / playableSongs.length) * 100 : 0;
       progressBarEl.style.width = `${percent}%`;
     }
 
     function shuffle(array) { return [...array].sort(() => Math.random() - 0.5); }
-    function refillSongDeck() {
+    function startSongDeck() {
       songDeck = shuffle(playableSongs);
-      usedThisCycle = 0;
-      cyclesDone += round === 0 ? 0 : 1;
+      songsPlayed = 0;
+      gameOver = false;
+    }
+
+    function getRandomStartSeconds() {
+      // YouTube does not give duration reliably before playback for every embed.
+      // This chooses a random point between 15 seconds and 2:30.
+      // If the song is shorter, YouTube starts as close as it can.
+      return Math.floor(Math.random() * 135) + 15;
     }
 
     function pickNextSong() {
       if (songDeck.length === 0) {
-        refillSongDeck();
+        gameOver = true;
+        return null;
       }
+
+      songsPlayed += 1;
+      const song = songDeck.pop();
+      return {
+        ...song,
+        start: getRandomStartSeconds()
+      };
+    }
 
       usedThisCycle += 1;
       return songDeck.pop();
@@ -490,13 +506,29 @@
       clearTimeout(stopTimer);
       clearInterval(timerInterval);
 
+      if (songDeck.length === 0 && songsPlayed > 0) {
+        gameOver = true;
+        statusEl.textContent = "Game over. You played every available song.";
+        revealEl.textContent = `Final Score: ${score}`;
+        timerEl.textContent = "DONE";
+        playClipBtn.disabled = true;
+        replayClipBtn.disabled = true;
+        revealBtn.disabled = true;
+        newRoundBtn.textContent = "Start New Game";
+        setAnswersDisabled(true);
+        updateScoreboard();
+        return;
+      }
+
       currentSong = pickNextSong();
+      if (!currentSong) return;
       answered = false;
       clipPlayed = false;
       replayCount = 0;
       answerStartTime = null;
       lastPoints = 0;
       round += 1;
+      newRoundBtn.textContent = "New Song";
 
       revealEl.textContent = "";
       timerEl.textContent = "0.00";
@@ -632,9 +664,9 @@
       round = 0;
       streak = 0;
       lastPoints = 0;
-      cyclesDone = 0;
-      usedThisCycle = 0;
-      songDeck = [];
+      songsPlayed = 0;
+      gameOver = false;
+      startSongDeck();
       updateScoreboard();
       newRound();
     }
@@ -653,7 +685,8 @@
       scores.push({ name, score, date: new Date().toLocaleDateString() });
       scores.sort((a, b) => b.score - a.score);
       saveLeaderboard(scores.slice(0, 10));
-      updateScoreboard();
+      startSongDeck();
+    updateScoreboard();
     renderLeaderboard();
     }
 
@@ -684,7 +717,13 @@
       return div.innerHTML;
     }
 
-    newRoundBtn.addEventListener("click", newRound);
+    newRoundBtn.addEventListener("click", () => {
+      if (gameOver) {
+        resetGame();
+      } else {
+        newRound();
+      }
+    });
     playClipBtn.addEventListener("click", () => playOneSecond(false));
     replayClipBtn.addEventListener("click", () => playOneSecond(true));
     revealBtn.addEventListener("click", revealAnswer);
