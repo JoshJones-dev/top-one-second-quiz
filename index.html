@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twenty One Pilots 1-Second Song Guess</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #2b2b2b, #080808 65%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 760px;
+      background: rgba(18, 18, 18, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      margin: 0 0 26px;
+      color: #cfcfcf;
+      line-height: 1.5;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .score-card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .score-card span {
+      display: block;
+      color: #aaa;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+
+    .score-card strong {
+      font-size: 1.4rem;
+    }
+
+    .player-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 22px;
+      position: relative;
+    }
+
+    #player {
+      width: 100%;
+      height: 100%;
+    }
+
+    .status {
+      min-height: 28px;
+      margin-bottom: 16px;
+      color: #ffd75e;
+      font-weight: bold;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #111;
+      background: #ffd75e;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .secondary {
+      background: #ffffff;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .answer {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 58px;
+    }
+
+    .answer.correct {
+      background: #1f8f4d;
+    }
+
+    .answer.wrong {
+      background: #9f2c2c;
+    }
+
+    .reveal {
+      margin-top: 18px;
+      color: #e5e5e5;
+      min-height: 26px;
+    }
+
+    .setup-note {
+      margin-top: 24px;
+      color: #aaa;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      .app {
+        padding: 20px;
+      }
+
+      .scoreboard,
+      .answers {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>1-Second Clique Quiz</h1>
+    <p class="subtitle">Press play, hear one second, then guess the Twenty One Pilots song.</p>
+
+    <section class="scoreboard">
+      <div class="score-card">
+        <span>Score</span>
+        <strong id="score">0</strong>
+      </div>
+      <div class="score-card">
+        <span>Round</span>
+        <strong id="round">0</strong>
+      </div>
+      <div class="score-card">
+        <span>Streak</span>
+        <strong id="streak">0</strong>
+      </div>
+    </section>
+
+    <div class="player-wrap">
+      <div id="player"></div>
+    </div>
+
+    <div class="status" id="status">Loading YouTube player...</div>
+
+    <div class="controls">
+      <button id="newRoundBtn" disabled>New Song</button>
+      <button id="playClipBtn" class="secondary" disabled>Play 1 Second</button>
+      <button id="revealBtn" class="secondary" disabled>Reveal</button>
+    </div>
+
+    <section class="answers" id="answers"></section>
+
+    <div class="reveal" id="reveal"></div>
+
+    <p class="setup-note">
+      This site uses YouTube embeds. It does not download, store, or redistribute music files.
+      Replace the video IDs in the song list with official uploads or videos you have permission to use.
+    </p>
+  </main>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    // IMPORTANT:
+    // Replace these YouTube IDs with official Twenty One Pilots videos or videos you have permission to embed.
+    // To get a video ID, copy the part after v= in a YouTube link.
+    // Example: https://www.youtube.com/watch?v=pXRviuL6vMY -> pXRviuL6vMY
+
+    const songs = [
+      { title: "Stressed Out", videoId: "pXRviuL6vMY", start: 0 },
+      { title: "Ride", videoId: "Pw-0pbY9JeU", start: 0 },
+      { title: "Heathens", videoId: "UprcpdwuwCg", start: 0 },
+      { title: "Tear in My Heart", videoId: "nky4me4NP70", start: 0 },
+      { title: "Jumpsuit", videoId: "UOUBW8bkjQ4", start: 0 },
+      { title: "Chlorine", videoId: "eJnQBXmZ7Ek", start: 0 },
+      { title: "The Outside", videoId: "eNcvblM8-_o", start: 0 },
+      { title: "Overcompensate", videoId: "53tgVlXBZVg", start: 0 }
+    ];
+
+    let player;
+    let currentSong = null;
+    let score = 0;
+    let round = 0;
+    let streak = 0;
+    let answered = false;
+    let stopTimer = null;
+
+    const scoreEl = document.getElementById("score");
+    const roundEl = document.getElementById("round");
+    const streakEl = document.getElementById("streak");
+    const statusEl = document.getElementById("status");
+    const answersEl = document.getElementById("answers");
+    const revealEl = document.getElementById("reveal");
+    const newRoundBtn = document.getElementById("newRoundBtn");
+    const playClipBtn = document.getElementById("playClipBtn");
+    const revealBtn = document.getElementById("revealBtn");
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player("player", {
+        height: "390",
+        width: "640",
+        videoId: songs[0].videoId,
+        playerVars: {
+          controls: 0,
+          modestbranding: 1,
+          rel: 0,
+          playsinline: 1,
+          disablekb: 1
+        },
+        events: {
+          onReady: () => {
+            statusEl.textContent = "Ready. Start a new song.";
+            newRoundBtn.disabled = false;
+            newRound();
+          }
+        }
+      });
+    }
+
+    function updateScoreboard() {
+      scoreEl.textContent = score;
+      roundEl.textContent = round;
+      streakEl.textContent = streak;
+    }
+
+    function shuffle(array) {
+      return [...array].sort(() => Math.random() - 0.5);
+    }
+
+    function pickRandomSong() {
+      return songs[Math.floor(Math.random() * songs.length)];
+    }
+
+    function getAnswerChoices(correctSong) {
+      const wrongChoices = shuffle(songs.filter(song => song.title !== correctSong.title)).slice(0, 3);
+      return shuffle([correctSong, ...wrongChoices]);
+    }
+
+    function newRound() {
+      clearTimeout(stopTimer);
+      currentSong = pickRandomSong();
+      answered = false;
+      round += 1;
+      revealEl.textContent = "";
+      statusEl.textContent = "Listen closely. You only get one second.";
+      updateScoreboard();
+
+      player.cueVideoById({
+        videoId: currentSong.videoId,
+        startSeconds: currentSong.start
+      });
+
+      playClipBtn.disabled = false;
+      revealBtn.disabled = false;
+      renderAnswers();
+    }
+
+    function playOneSecond() {
+      if (!currentSong || !player) return;
+
+      clearTimeout(stopTimer);
+      statusEl.textContent = "Playing...";
+
+      player.seekTo(currentSong.start, true);
+      player.playVideo();
+
+      stopTimer = setTimeout(() => {
+        player.pauseVideo();
+        statusEl.textContent = "Make your guess.";
+      }, 1000);
+    }
+
+    function renderAnswers() {
+      answersEl.innerHTML = "";
+      const choices = getAnswerChoices(currentSong);
+
+      choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.className = "answer";
+        btn.textContent = choice.title;
+        btn.onclick = () => checkAnswer(choice.title, btn);
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selectedTitle, button) {
+      if (answered) return;
+
+      answered = true;
+      const isCorrect = selectedTitle === currentSong.title;
+
+      document.querySelectorAll(".answer").forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === currentSong.title) {
+          btn.classList.add("correct");
+        }
+      });
+
+      if (isCorrect) {
+        score += 1;
+        streak += 1;
+        statusEl.textContent = "Correct!";
+      } else {
+        streak = 0;
+        button.classList.add("wrong");
+        statusEl.textContent = "Wrong.";
+      }
+
+      revealEl.textContent = `Answer: ${currentSong.title}`;
+      updateScoreboard();
+    }
+
+    function revealAnswer() {
+      if (!currentSong) return;
+      answered = true;
+      streak = 0;
+      revealEl.textContent = `Answer: ${currentSong.title}`;
+      statusEl.textContent = "Answer revealed.";
+
+      document.querySelectorAll(".answer").forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === currentSong.title) {
+          btn.classList.add("correct");
+        }
+      });
+
+      updateScoreboard();
+    }
+
+    newRoundBtn.addEventListener("click", newRound);
+    playClipBtn.addEventListener("click", playOneSecond);
+    revealBtn.addEventListener("click", revealAnswer);
+  </script>
+</body>
+</html>
