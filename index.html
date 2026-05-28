@@ -12,7 +12,7 @@
       min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
       background: radial-gradient(circle at top, #2a2a2a, #070707 65%);
-      color: #ffffff;
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -23,29 +23,16 @@
       width: 100%;
       max-width: 900px;
       background: rgba(15, 15, 15, 0.94);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255,255,255,.12);
       border-radius: 26px;
       padding: 28px;
-      box-shadow: 0 24px 90px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 24px 90px rgba(0,0,0,.5);
       text-align: center;
     }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      letter-spacing: -1px;
-    }
-
-    h2 {
-      margin: 30px 0 12px;
-      font-size: 1.4rem;
-    }
-
-    .subtitle {
-      margin: 0 0 24px;
-      color: #cfcfcf;
-      line-height: 1.5;
-    }
+    h1 { margin: 0 0 10px; font-size: clamp(2rem, 5vw, 3.5rem); }
+    h2 { margin: 30px 0 12px; font-size: 1.4rem; }
+    .subtitle { margin: 0 0 24px; color: #cfcfcf; line-height: 1.5; }
 
     .scoreboard {
       display: grid;
@@ -55,7 +42,7 @@
     }
 
     .score-card {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,.08);
       border-radius: 16px;
       padding: 14px;
     }
@@ -63,11 +50,28 @@
     .score-card span {
       display: block;
       color: #aaa;
-      font-size: 0.82rem;
+      font-size: .82rem;
       margin-bottom: 4px;
     }
 
     .score-card strong { font-size: 1.35rem; }
+
+    .progress-wrap {
+      width: 100%;
+      height: 18px;
+      background: rgba(255,255,255,.12);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: -8px 0 22px;
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: #ffd75e;
+      border-radius: 999px;
+      transition: width .25s ease;
+    }
 
     .hidden-player {
       width: 1px;
@@ -81,8 +85,8 @@
     }
 
     .listen-box {
-      background: linear-gradient(135deg, rgba(255, 215, 94, 0.14), rgba(255, 255, 255, 0.06));
-      border: 1px solid rgba(255, 215, 94, 0.25);
+      background: linear-gradient(135deg, rgba(255,215,94,.14), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,215,94,.25);
       border-radius: 22px;
       padding: 24px;
       margin-bottom: 20px;
@@ -117,32 +121,20 @@
       border-radius: 999px;
       padding: 13px 20px;
       font-weight: 800;
-      font-size: 0.98rem;
+      font-size: .98rem;
     }
 
     button {
       cursor: pointer;
       color: #111;
       background: #ffd75e;
-      transition: transform 0.15s ease, opacity 0.15s ease;
+      transition: transform .15s ease, opacity .15s ease;
     }
 
     button:hover { transform: translateY(-1px); }
-
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    input {
-      min-width: 220px;
-      background: #fff;
-      color: #111;
-      outline: none;
-    }
-
-    .secondary { background: #ffffff; }
+    button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    input { min-width: 220px; background: white; color: #111; outline: none; }
+    .secondary { background: white; }
     .danger { background: #ff8a8a; }
 
     .answers {
@@ -153,9 +145,9 @@
     }
 
     .answer {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255,255,255,.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,.12);
       border-radius: 16px;
       padding: 16px;
       min-height: 58px;
@@ -174,32 +166,25 @@
     .leaderboard {
       width: 100%;
       border-collapse: collapse;
-      overflow: hidden;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      background: rgba(255,255,255,.08);
       margin-top: 12px;
     }
 
     .leaderboard th, .leaderboard td {
       padding: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255,255,255,.1);
       text-align: left;
     }
 
     .leaderboard th { color: #ffd75e; }
-
-    .setup-note {
-      margin-top: 24px;
-      color: #aaa;
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
+    .setup-note { margin-top: 24px; color: #aaa; font-size: .9rem; line-height: 1.5; }
 
     @media (max-width: 650px) {
       .app { padding: 20px; }
       .scoreboard { grid-template-columns: repeat(2, 1fr); }
       .answers { grid-template-columns: 1fr; }
-      .leaderboard th, .leaderboard td { font-size: 0.85rem; padding: 9px; }
     }
   </style>
 </head>
@@ -215,14 +200,11 @@
       <div class="score-card"><span>Last Points</span><strong id="lastPoints">0</strong></div>
       <div class="score-card"><span>Total Songs</span><strong id="totalSongs">0</strong></div>
       <div class="score-card"><span>Playable Songs</span><strong id="playableSongs">0</strong></div>
-      <div class="score-card"><span>Songs Played</span><strong id="cycleProgressText">0 / 0</strong></div>
+      <div class="score-card"><span>Songs Played</span><strong id="songsPlayed">0 / 0</strong></div>
       <div class="score-card"><span>Songs Left</span><strong id="songsLeft">0</strong></div>
     </section>
 
-    <div style="width:100%;height:18px;background:rgba(255,255,255,0.12);border-radius:999px;overflow:hidden;margin:-8px 0 22px;">
-      <div id="progressBar" style="height:100%;width:0%;background:#ffd75e;border-radius:999px;transition:width .25s ease;"></div>
-    </div>
-
+    <div class="progress-wrap"><div id="progressBar"></div></div>
     <div class="hidden-player"><div id="player"></div></div>
 
     <section class="listen-box">
@@ -251,147 +233,116 @@
 
     <h2>Local Leaderboard</h2>
     <table class="leaderboard">
-      <thead>
-        <tr><th>#</th><th>Name</th><th>Score</th><th>Date</th></tr>
-      </thead>
+      <thead><tr><th>#</th><th>Name</th><th>Score</th><th>Date</th></tr></thead>
       <tbody id="leaderboardBody"></tbody>
     </table>
 
-    <p class="setup-note">
-      This uses a hidden YouTube embed so the video does not spoil the answer. GitHub Pages can save this leaderboard locally in the browser. For a public online leaderboard, connect Firebase or Supabase.
-    </p>
+    <p class="setup-note">This uses a hidden YouTube embed so the video does not spoil the answer. Songs without YouTube IDs are counted in the full list but skipped until you add IDs.</p>
   </main>
 
-  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    /*
-      IMPORTANT ABOUT THE SONG LIST:
-      - The quiz includes the full title pool from major albums, non-album singles, and common covers/features.
-      - Only songs with a videoId can be played.
-      - Add official YouTube video IDs where videoId is blank.
-      - Blank IDs stay in the database but are skipped for audio rounds.
-    */
-
     const songs = [
-      // Twenty One Pilots, self-titled
-      { title: "Implicit Demand for Proof", album: "Twenty One Pilots", videoId: "", start: 20 },
-      { title: "Fall Away", album: "Twenty One Pilots", videoId: "", start: 25 },
-      { title: "The Pantaloon", album: "Twenty One Pilots", videoId: "", start: 20 },
-      { title: "Addict With a Pen", album: "Twenty One Pilots", videoId: "", start: 35 },
-      { title: "Friend, Please", album: "Twenty One Pilots", videoId: "", start: 35 },
-      { title: "March to the Sea", album: "Twenty One Pilots", videoId: "", start: 45 },
-      { title: "Johnny Boy", album: "Twenty One Pilots", videoId: "", start: 25 },
-      { title: "Oh Ms Believer", album: "Twenty One Pilots", videoId: "", start: 20 },
-      { title: "Air Catcher", album: "Twenty One Pilots", videoId: "", start: 28 },
-      { title: "Trapdoor", album: "Twenty One Pilots", videoId: "", start: 22 },
-      { title: "A Car, a Torch, a Death", album: "Twenty One Pilots", videoId: "", start: 35 },
-      { title: "Taxi Cab", album: "Twenty One Pilots", videoId: "", start: 42 },
-      { title: "Before You Start Your Day", album: "Twenty One Pilots", videoId: "", start: 22 },
-      { title: "Isle of Flightless Birds", album: "Twenty One Pilots", videoId: "", start: 30 },
-
-      // Regional at Best
-      { title: "Guns for Hands", album: "Regional at Best / Vessel", videoId: "Pmv8aQKO6k0", start: 35 },
-      { title: "Holding On to You", album: "Regional at Best / Vessel", videoId: "ktBMxkLUIwY", start: 34 },
-      { title: "Ode to Sleep", album: "Regional at Best / Vessel", videoId: "2OnO3UXFZdE", start: 30 },
-      { title: "Slowtown", album: "Regional at Best", videoId: "", start: 25 },
-      { title: "Car Radio", album: "Regional at Best / Vessel", videoId: "92XVwY54h5k", start: 46 },
-      { title: "Forest", album: "Regional at Best", videoId: "", start: 30 },
-      { title: "Glowing Eyes", album: "Regional at Best", videoId: "", start: 30 },
-      { title: "Kitchen Sink", album: "Regional at Best", videoId: "", start: 50 },
-      { title: "Anathema", album: "Regional at Best", videoId: "", start: 32 },
-      { title: "Lovely", album: "Regional at Best / Vessel Bonus", videoId: "", start: 25 },
-      { title: "Ruby", album: "Regional at Best", videoId: "", start: 25 },
-      { title: "Trees", album: "Regional at Best / Vessel", videoId: "", start: 38 },
-      { title: "Be Concerned", album: "Regional at Best", videoId: "", start: 28 },
-      { title: "Clear", album: "Regional at Best", videoId: "", start: 25 },
-
-      // Vessel
-      { title: "Migraine", album: "Vessel", videoId: "Bs92ejAGLdw", start: 28 },
-      { title: "House of Gold", album: "Vessel", videoId: "mDyxykpYeu8", start: 18 },
-      { title: "Semi-Automatic", album: "Vessel", videoId: "", start: 24 },
-      { title: "Screen", album: "Vessel", videoId: "", start: 34 },
-      { title: "The Run and Go", album: "Vessel", videoId: "", start: 34 },
-      { title: "Fake You Out", album: "Vessel", videoId: "", start: 30 },
-      { title: "Truce", album: "Vessel", videoId: "eCeBNwBUkcI", start: 20 },
-
-      // Blurryface
-      { title: "Heavydirtysoul", album: "Blurryface", videoId: "r_9Kf0D5BTs", start: 28 },
-      { title: "Stressed Out", album: "Blurryface", videoId: "pXRviuL6vMY", start: 15 },
-      { title: "Ride", album: "Blurryface", videoId: "Pw-0pbY9JeU", start: 23 },
-      { title: "Fairly Local", album: "Blurryface", videoId: "HDI9inno86U", start: 20 },
-      { title: "Tear in My Heart", album: "Blurryface", videoId: "nky4me4NP70", start: 28 },
-      { title: "Lane Boy", album: "Blurryface", videoId: "ywvRgGAd2XI", start: 30 },
-      { title: "The Judge", album: "Blurryface", videoId: "", start: 30 },
-      { title: "Doubt", album: "Blurryface", videoId: "", start: 30 },
-      { title: "Polarize", album: "Blurryface", videoId: "", start: 30 },
-      { title: "We Don't Believe What's on TV", album: "Blurryface", videoId: "zZEumf7RowI", start: 20 },
-      { title: "Message Man", album: "Blurryface", videoId: "", start: 26 },
-      { title: "Hometown", album: "Blurryface", videoId: "", start: 30 },
-      { title: "Not Today", album: "Blurryface", videoId: "", start: 30 },
-      { title: "Goner", album: "Blurryface", videoId: "3J5mE-J1WLk", start: 30 },
-
-      // Trench
-      { title: "Jumpsuit", album: "Trench", videoId: "UOUBW8bkjQ4", start: 35 },
-      { title: "Levitate", album: "Trench", videoId: "uv_1AKKKJnk", start: 18 },
-      { title: "Morph", album: "Trench", videoId: "OmL9TqTFIAc", start: 30 },
-      { title: "My Blood", album: "Trench", videoId: "8mn-FFjIbo8", start: 35 },
-      { title: "Chlorine", album: "Trench", videoId: "eJnQBXmZ7Ek", start: 42 },
-      { title: "Smithereens", album: "Trench", videoId: "", start: 24 },
-      { title: "Neon Gravestones", album: "Trench", videoId: "", start: 42 },
-      { title: "The Hype", album: "Trench", videoId: "IO9XlQrEt2Y", start: 32 },
-      { title: "Nico and the Niners", album: "Trench", videoId: "hMAPyGoqQVw", start: 24 },
-      { title: "Cut My Lip", album: "Trench", videoId: "", start: 30 },
-      { title: "Bandito", album: "Trench", videoId: "", start: 50 },
-      { title: "Pet Cheetah", album: "Trench", videoId: "", start: 30 },
-      { title: "Legend", album: "Trench", videoId: "", start: 30 },
-      { title: "Leave the City", album: "Trench", videoId: "", start: 35 },
-
-      // Scaled and Icy
-      { title: "Good Day", album: "Scaled and Icy", videoId: "", start: 20 },
-      { title: "Choker", album: "Scaled and Icy", videoId: "2sBRnnnZyFw", start: 25 },
-      { title: "Shy Away", album: "Scaled and Icy", videoId: "3sO-Y1Zbft4", start: 20 },
-      { title: "The Outside", album: "Scaled and Icy", videoId: "eNcvblM8-_o", start: 33 },
-      { title: "Saturday", album: "Scaled and Icy", videoId: "FiXVRdotCEk", start: 20 },
-      { title: "Never Take It", album: "Scaled and Icy", videoId: "", start: 30 },
-      { title: "Mulberry Street", album: "Scaled and Icy", videoId: "", start: 28 },
-      { title: "Formidable", album: "Scaled and Icy", videoId: "", start: 26 },
-      { title: "Bounce Man", album: "Scaled and Icy", videoId: "", start: 25 },
-      { title: "No Chances", album: "Scaled and Icy", videoId: "", start: 30 },
-      { title: "Redecorate", album: "Scaled and Icy", videoId: "", start: 30 },
-
-      // Clancy
-      { title: "Overcompensate", album: "Clancy", videoId: "53tgVlXBZVg", start: 31 },
-      { title: "Next Semester", album: "Clancy", videoId: "a5i-KdUQ47o", start: 24 },
-      { title: "Backslide", album: "Clancy", videoId: "YAmLMohrus4", start: 25 },
-      { title: "Midwest Indigo", album: "Clancy", videoId: "", start: 24 },
-      { title: "Routines in the Night", album: "Clancy", videoId: "", start: 26 },
-      { title: "Vignette", album: "Clancy", videoId: "", start: 25 },
-      { title: "The Craving", album: "Clancy", videoId: "", start: 20 },
-      { title: "Lavish", album: "Clancy", videoId: "", start: 25 },
-      { title: "Navigating", album: "Clancy", videoId: "", start: 28 },
-      { title: "Snap Back", album: "Clancy", videoId: "", start: 25 },
-      { title: "Oldies Station", album: "Clancy", videoId: "", start: 28 },
-      { title: "At the Risk of Feeling Dumb", album: "Clancy", videoId: "", start: 25 },
-      { title: "Paladin Strait", album: "Clancy", videoId: "", start: 45 },
-
-      // Non-album singles, covers, soundtrack, extras
-      { title: "Level of Concern", album: "Single", videoId: "loOWKm8GW6A", start: 22 },
-      { title: "Christmas Saves the Year", album: "Single", videoId: "", start: 25 },
-      { title: "Heathens", album: "Suicide Squad Soundtrack", videoId: "UprcpdwuwCg", start: 18 },
-      { title: "Cancer", album: "Cover", videoId: "", start: 24 },
-      { title: "The Line", album: "Arcane Soundtrack", videoId: "", start: 25 },
-      { title: "Can't Help Falling in Love", album: "Cover", videoId: "", start: 20 },
-      { title: "Jar of Hearts", album: "Cover", videoId: "", start: 20 },
-      { title: "Mad World", album: "Cover", videoId: "", start: 20 }
+      { title: "Implicit Demand for Proof", album: "Twenty One Pilots", videoId: "" },
+      { title: "Fall Away", album: "Twenty One Pilots", videoId: "" },
+      { title: "The Pantaloon", album: "Twenty One Pilots", videoId: "" },
+      { title: "Addict With a Pen", album: "Twenty One Pilots", videoId: "" },
+      { title: "Friend, Please", album: "Twenty One Pilots", videoId: "" },
+      { title: "March to the Sea", album: "Twenty One Pilots", videoId: "" },
+      { title: "Johnny Boy", album: "Twenty One Pilots", videoId: "" },
+      { title: "Oh Ms Believer", album: "Twenty One Pilots", videoId: "" },
+      { title: "Air Catcher", album: "Twenty One Pilots", videoId: "" },
+      { title: "Trapdoor", album: "Twenty One Pilots", videoId: "" },
+      { title: "A Car, a Torch, a Death", album: "Twenty One Pilots", videoId: "" },
+      { title: "Taxi Cab", album: "Twenty One Pilots", videoId: "" },
+      { title: "Before You Start Your Day", album: "Twenty One Pilots", videoId: "" },
+      { title: "Isle of Flightless Birds", album: "Twenty One Pilots", videoId: "" },
+      { title: "Guns for Hands", album: "Vessel", videoId: "Pmv8aQKO6k0" },
+      { title: "Holding On to You", album: "Vessel", videoId: "ktBMxkLUIwY" },
+      { title: "Ode to Sleep", album: "Vessel", videoId: "2OnO3UXFZdE" },
+      { title: "Slowtown", album: "Regional at Best", videoId: "" },
+      { title: "Car Radio", album: "Vessel", videoId: "92XVwY54h5k" },
+      { title: "Forest", album: "Regional at Best", videoId: "" },
+      { title: "Glowing Eyes", album: "Regional at Best", videoId: "" },
+      { title: "Kitchen Sink", album: "Regional at Best", videoId: "" },
+      { title: "Anathema", album: "Regional at Best", videoId: "" },
+      { title: "Lovely", album: "Regional at Best", videoId: "" },
+      { title: "Ruby", album: "Regional at Best", videoId: "" },
+      { title: "Trees", album: "Vessel", videoId: "" },
+      { title: "Be Concerned", album: "Regional at Best", videoId: "" },
+      { title: "Clear", album: "Regional at Best", videoId: "" },
+      { title: "Migraine", album: "Vessel", videoId: "Bs92ejAGLdw" },
+      { title: "House of Gold", album: "Vessel", videoId: "mDyxykpYeu8" },
+      { title: "Semi-Automatic", album: "Vessel", videoId: "" },
+      { title: "Screen", album: "Vessel", videoId: "" },
+      { title: "The Run and Go", album: "Vessel", videoId: "" },
+      { title: "Fake You Out", album: "Vessel", videoId: "" },
+      { title: "Truce", album: "Vessel", videoId: "eCeBNwBUkcI" },
+      { title: "Heavydirtysoul", album: "Blurryface", videoId: "r_9Kf0D5BTs" },
+      { title: "Stressed Out", album: "Blurryface", videoId: "pXRviuL6vMY" },
+      { title: "Ride", album: "Blurryface", videoId: "Pw-0pbY9JeU" },
+      { title: "Fairly Local", album: "Blurryface", videoId: "HDI9inno86U" },
+      { title: "Tear in My Heart", album: "Blurryface", videoId: "nky4me4NP70" },
+      { title: "Lane Boy", album: "Blurryface", videoId: "ywvRgGAd2XI" },
+      { title: "The Judge", album: "Blurryface", videoId: "" },
+      { title: "Doubt", album: "Blurryface", videoId: "" },
+      { title: "Polarize", album: "Blurryface", videoId: "" },
+      { title: "We Don't Believe What's on TV", album: "Blurryface", videoId: "zZEumf7RowI" },
+      { title: "Message Man", album: "Blurryface", videoId: "" },
+      { title: "Hometown", album: "Blurryface", videoId: "" },
+      { title: "Not Today", album: "Blurryface", videoId: "" },
+      { title: "Goner", album: "Blurryface", videoId: "3J5mE-J1WLk" },
+      { title: "Jumpsuit", album: "Trench", videoId: "UOUBW8bkjQ4" },
+      { title: "Levitate", album: "Trench", videoId: "uv_1AKKKJnk" },
+      { title: "Morph", album: "Trench", videoId: "OmL9TqTFIAc" },
+      { title: "My Blood", album: "Trench", videoId: "8mn-FFjIbo8" },
+      { title: "Chlorine", album: "Trench", videoId: "eJnQBXmZ7Ek" },
+      { title: "Smithereens", album: "Trench", videoId: "" },
+      { title: "Neon Gravestones", album: "Trench", videoId: "" },
+      { title: "The Hype", album: "Trench", videoId: "IO9XlQrEt2Y" },
+      { title: "Nico and the Niners", album: "Trench", videoId: "hMAPyGoqQVw" },
+      { title: "Cut My Lip", album: "Trench", videoId: "" },
+      { title: "Bandito", album: "Trench", videoId: "" },
+      { title: "Pet Cheetah", album: "Trench", videoId: "" },
+      { title: "Legend", album: "Trench", videoId: "" },
+      { title: "Leave the City", album: "Trench", videoId: "" },
+      { title: "Good Day", album: "Scaled and Icy", videoId: "" },
+      { title: "Choker", album: "Scaled and Icy", videoId: "2sBRnnnZyFw" },
+      { title: "Shy Away", album: "Scaled and Icy", videoId: "3sO-Y1Zbft4" },
+      { title: "The Outside", album: "Scaled and Icy", videoId: "eNcvblM8-_o" },
+      { title: "Saturday", album: "Scaled and Icy", videoId: "FiXVRdotCEk" },
+      { title: "Never Take It", album: "Scaled and Icy", videoId: "" },
+      { title: "Mulberry Street", album: "Scaled and Icy", videoId: "" },
+      { title: "Formidable", album: "Scaled and Icy", videoId: "" },
+      { title: "Bounce Man", album: "Scaled and Icy", videoId: "" },
+      { title: "No Chances", album: "Scaled and Icy", videoId: "" },
+      { title: "Redecorate", album: "Scaled and Icy", videoId: "" },
+      { title: "Overcompensate", album: "Clancy", videoId: "53tgVlXBZVg" },
+      { title: "Next Semester", album: "Clancy", videoId: "a5i-KdUQ47o" },
+      { title: "Backslide", album: "Clancy", videoId: "YAmLMohrus4" },
+      { title: "Midwest Indigo", album: "Clancy", videoId: "" },
+      { title: "Routines in the Night", album: "Clancy", videoId: "" },
+      { title: "Vignette", album: "Clancy", videoId: "" },
+      { title: "The Craving", album: "Clancy", videoId: "" },
+      { title: "Lavish", album: "Clancy", videoId: "" },
+      { title: "Navigating", album: "Clancy", videoId: "" },
+      { title: "Snap Back", album: "Clancy", videoId: "" },
+      { title: "Oldies Station", album: "Clancy", videoId: "" },
+      { title: "At the Risk of Feeling Dumb", album: "Clancy", videoId: "" },
+      { title: "Paladin Strait", album: "Clancy", videoId: "" },
+      { title: "Level of Concern", album: "Single", videoId: "loOWKm8GW6A" },
+      { title: "Christmas Saves the Year", album: "Single", videoId: "" },
+      { title: "Heathens", album: "Suicide Squad Soundtrack", videoId: "UprcpdwuwCg" },
+      { title: "Cancer", album: "Cover", videoId: "" },
+      { title: "The Line", album: "Arcane Soundtrack", videoId: "" },
+      { title: "Can't Help Falling in Love", album: "Cover", videoId: "" }
     ];
 
     const playableSongs = songs.filter(song => song.videoId && song.videoId.trim() !== "");
 
-    let player;
+    let player = null;
     let currentSong = null;
     let songDeck = [];
-    let songsPlayed = 0;
-    let gameOver = false;
+    let songsPlayedCount = 0;
     let score = 0;
     let round = 0;
     let streak = 0;
@@ -402,6 +353,7 @@
     let stopTimer = null;
     let answerStartTime = null;
     let timerInterval = null;
+    let gameOver = false;
 
     const scoreEl = document.getElementById("score");
     const roundEl = document.getElementById("round");
@@ -409,7 +361,7 @@
     const lastPointsEl = document.getElementById("lastPoints");
     const totalSongsEl = document.getElementById("totalSongs");
     const playableSongsEl = document.getElementById("playableSongs");
-    const cycleProgressTextEl = document.getElementById("cycleProgressText");
+    const songsPlayedEl = document.getElementById("songsPlayed");
     const songsLeftEl = document.getElementById("songsLeft");
     const progressBarEl = document.getElementById("progressBar");
     const statusEl = document.getElementById("status");
@@ -426,9 +378,16 @@
     const playerNameInput = document.getElementById("playerName");
     const leaderboardBody = document.getElementById("leaderboardBody");
 
-    function onYouTubeIframeAPIReady() {
+    function loadYouTubeApi() {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(tag);
+    }
+
+    window.onYouTubeIframeAPIReady = function () {
       if (playableSongs.length === 0) {
-        statusEl.textContent = "No playable songs yet. Add YouTube video IDs.";
+        statusEl.textContent = "No playable songs. Add YouTube video IDs.";
+        updateScoreboard();
         return;
       }
 
@@ -436,19 +395,62 @@
         height: "1",
         width: "1",
         videoId: playableSongs[0].videoId,
-        playerVars: { controls: 0, modestbranding: 1, rel: 0, playsinline: 1, disablekb: 1 },
+        playerVars: {
+          controls: 0,
+          modestbranding: 1,
+          rel: 0,
+          playsinline: 1,
+          disablekb: 1
+        },
         events: {
-          onReady: () => {
-            statusEl.textContent = `Ready. ${playableSongs.length} playable songs loaded.`;
-            newRoundBtn.disabled = false;
-            newRound();
+          onReady: function () {
+            startNewGame();
           },
-          onError: () => {
-            statusEl.textContent = "This YouTube video cannot play embedded. New song loaded.";
-            setTimeout(newRound, 900);
+          onError: function () {
+            statusEl.textContent = "That YouTube embed failed. Skipping to the next song.";
+            setTimeout(function () {
+              newRound();
+            }, 800);
           }
         }
       });
+    };
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function randomStartSeconds() {
+      return Math.floor(Math.random() * 135) + 15;
+    }
+
+    function startNewGame() {
+      clearTimeout(stopTimer);
+      clearInterval(timerInterval);
+
+      score = 0;
+      round = 0;
+      streak = 0;
+      lastPoints = 0;
+      songsPlayedCount = 0;
+      answered = false;
+      clipPlayed = false;
+      replayCount = 0;
+      gameOver = false;
+      songDeck = shuffle(playableSongs);
+
+      answersEl.innerHTML = "";
+      revealEl.textContent = "";
+      timerEl.textContent = "0.00";
+      newRoundBtn.textContent = "New Song";
+      statusEl.textContent = `Game loaded. ${playableSongs.length} playable songs available.`;
+      updateScoreboard();
+      newRound();
     }
 
     function updateScoreboard() {
@@ -458,93 +460,82 @@
       lastPointsEl.textContent = lastPoints;
       totalSongsEl.textContent = songs.length;
       playableSongsEl.textContent = playableSongs.length;
-      cycleProgressTextEl.textContent = `${songsPlayed} / ${playableSongs.length}`;
-      songsLeftEl.textContent = Math.max(playableSongs.length - songsPlayed, 0);
-
-      const percent = playableSongs.length > 0 ? (songsPlayed / playableSongs.length) * 100 : 0;
-      progressBarEl.style.width = `${percent}%`;
-    }
-
-    function shuffle(array) { return [...array].sort(() => Math.random() - 0.5); }
-    function startSongDeck() {
-      songDeck = shuffle(playableSongs);
-      songsPlayed = 0;
-      gameOver = false;
-    }
-
-    function getRandomStartSeconds() {
-      // YouTube does not give duration reliably before playback for every embed.
-      // This chooses a random point between 15 seconds and 2:30.
-      // If the song is shorter, YouTube starts as close as it can.
-      return Math.floor(Math.random() * 135) + 15;
-    }
-
-    function pickNextSong() {
-      if (songDeck.length === 0) {
-        gameOver = true;
-        return null;
-      }
-
-      songsPlayed += 1;
-      const song = songDeck.pop();
-      return {
-        ...song,
-        start: getRandomStartSeconds()
-      };
-    }
-
-      usedThisCycle += 1;
-      return songDeck.pop();
-    }
-
-    function getAnswerChoices(correctSong) {
-      const wrongChoices = shuffle(songs.filter(song => song.title !== correctSong.title)).slice(0, 3);
-      return shuffle([correctSong, ...wrongChoices]);
+      songsPlayedEl.textContent = `${songsPlayedCount} / ${playableSongs.length}`;
+      songsLeftEl.textContent = Math.max(playableSongs.length - songsPlayedCount, 0);
+      progressBarEl.style.width = playableSongs.length ? `${(songsPlayedCount / playableSongs.length) * 100}%` : "0%";
     }
 
     function newRound() {
+      if (!player) return;
+
       clearTimeout(stopTimer);
       clearInterval(timerInterval);
 
-      if (songDeck.length === 0 && songsPlayed > 0) {
-        gameOver = true;
-        statusEl.textContent = "Game over. You played every available song.";
-        revealEl.textContent = `Final Score: ${score}`;
-        timerEl.textContent = "DONE";
-        playClipBtn.disabled = true;
-        replayClipBtn.disabled = true;
-        revealBtn.disabled = true;
-        newRoundBtn.textContent = "Start New Game";
-        setAnswersDisabled(true);
-        updateScoreboard();
+      if (songDeck.length === 0) {
+        endGame();
         return;
       }
 
-      currentSong = pickNextSong();
-      if (!currentSong) return;
+      currentSong = {
+        ...songDeck.pop(),
+        start: randomStartSeconds()
+      };
+
+      songsPlayedCount += 1;
+      round += 1;
       answered = false;
       clipPlayed = false;
       replayCount = 0;
       answerStartTime = null;
       lastPoints = 0;
-      round += 1;
-      newRoundBtn.textContent = "New Song";
 
       revealEl.textContent = "";
       timerEl.textContent = "0.00";
       statusEl.textContent = "Press Play 1 Second. No video will be shown.";
-      updateScoreboard();
-
-      player.cueVideoById({ videoId: currentSong.videoId, startSeconds: currentSong.start });
-
+      newRoundBtn.disabled = false;
       playClipBtn.disabled = false;
       replayClipBtn.disabled = true;
       revealBtn.disabled = false;
+
+      try {
+        player.cueVideoById({
+          videoId: currentSong.videoId,
+          startSeconds: currentSong.start
+        });
+      } catch (error) {
+        statusEl.textContent = "Could not cue this video. Skipping song.";
+        setTimeout(newRound, 800);
+        return;
+      }
+
       renderAnswers();
       setAnswersDisabled(true);
+      updateScoreboard();
     }
 
-    function playOneSecond(isReplay = false) {
+    function endGame() {
+      gameOver = true;
+      currentSong = null;
+      clearTimeout(stopTimer);
+      clearInterval(timerInterval);
+
+      try {
+        if (player) player.pauseVideo();
+      } catch (error) {}
+
+      statusEl.textContent = "Game over. You played every available song.";
+      timerEl.textContent = "DONE";
+      revealEl.textContent = `Final Score: ${score}`;
+      answersEl.innerHTML = "";
+      newRoundBtn.textContent = "Start New Game";
+      newRoundBtn.disabled = false;
+      playClipBtn.disabled = true;
+      replayClipBtn.disabled = true;
+      revealBtn.disabled = true;
+      updateScoreboard();
+    }
+
+    function playOneSecond(isReplay) {
       if (!currentSong || !player || answered) return;
 
       clearTimeout(stopTimer);
@@ -557,11 +548,19 @@
       replayClipBtn.disabled = true;
       setAnswersDisabled(true);
 
-      player.seekTo(currentSong.start, true);
-      player.playVideo();
+      try {
+        player.seekTo(currentSong.start, true);
+        player.playVideo();
+      } catch (error) {
+        statusEl.textContent = "Playback failed. Try New Song.";
+        return;
+      }
 
-      stopTimer = setTimeout(() => {
-        player.pauseVideo();
+      stopTimer = setTimeout(function () {
+        try {
+          player.pauseVideo();
+        } catch (error) {}
+
         clipPlayed = true;
         answerStartTime = Date.now();
         statusEl.textContent = "Guess now. Faster answers score higher.";
@@ -572,10 +571,9 @@
     }
 
     function startAnswerTimer() {
-      timerInterval = setInterval(() => {
+      timerInterval = setInterval(function () {
         if (!answerStartTime || answered) return;
-        const seconds = (Date.now() - answerStartTime) / 1000;
-        timerEl.textContent = seconds.toFixed(2);
+        timerEl.textContent = ((Date.now() - answerStartTime) / 1000).toFixed(2);
       }, 50);
     }
 
@@ -587,34 +585,45 @@
       return Math.max(100, basePoints - timePenalty - replayPenalty + streakBonus);
     }
 
-    function setAnswersDisabled(disabled) {
-      document.querySelectorAll(".answer").forEach(btn => btn.disabled = disabled);
+    function getAnswerChoices(correctSong) {
+      const wrongChoices = shuffle(songs.filter(song => song.title !== correctSong.title)).slice(0, 3);
+      return shuffle([correctSong, ...wrongChoices]);
     }
 
     function renderAnswers() {
       answersEl.innerHTML = "";
-      const choices = getAnswerChoices(currentSong);
-      choices.forEach(choice => {
+      getAnswerChoices(currentSong).forEach(function (choice) {
         const btn = document.createElement("button");
         btn.className = "answer";
         btn.textContent = choice.title;
-        btn.onclick = () => checkAnswer(choice.title, btn);
+        btn.onclick = function () {
+          checkAnswer(choice.title, btn);
+        };
         answersEl.appendChild(btn);
       });
     }
 
+    function setAnswersDisabled(disabled) {
+      document.querySelectorAll(".answer").forEach(function (btn) {
+        btn.disabled = disabled;
+      });
+    }
+
     function checkAnswer(selectedTitle, button) {
-      if (answered || !clipPlayed) return;
+      if (answered || !clipPlayed || !currentSong) return;
 
       answered = true;
       clearInterval(timerInterval);
-      player.pauseVideo();
+
+      try {
+        player.pauseVideo();
+      } catch (error) {}
 
       const seconds = answerStartTime ? (Date.now() - answerStartTime) / 1000 : 0;
       timerEl.textContent = seconds.toFixed(2);
       const isCorrect = selectedTitle === currentSong.title;
 
-      document.querySelectorAll(".answer").forEach(btn => {
+      document.querySelectorAll(".answer").forEach(function (btn) {
         btn.disabled = true;
         if (btn.textContent === currentSong.title) btn.classList.add("correct");
       });
@@ -642,14 +651,17 @@
 
       answered = true;
       clearInterval(timerInterval);
-      player.pauseVideo();
+
+      try {
+        player.pauseVideo();
+      } catch (error) {}
 
       lastPoints = 0;
       streak = 0;
       revealEl.textContent = `Answer: ${currentSong.title} — ${currentSong.album}`;
       statusEl.textContent = "Answer revealed. +0 points";
 
-      document.querySelectorAll(".answer").forEach(btn => {
+      document.querySelectorAll(".answer").forEach(function (btn) {
         btn.disabled = true;
         if (btn.textContent === currentSong.title) btn.classList.add("correct");
       });
@@ -659,20 +671,12 @@
       updateScoreboard();
     }
 
-    function resetGame() {
-      score = 0;
-      round = 0;
-      streak = 0;
-      lastPoints = 0;
-      songsPlayed = 0;
-      gameOver = false;
-      startSongDeck();
-      updateScoreboard();
-      newRound();
-    }
-
     function getLeaderboard() {
-      return JSON.parse(localStorage.getItem("topOneSecondLeaderboard") || "[]");
+      try {
+        return JSON.parse(localStorage.getItem("topOneSecondLeaderboard") || "[]");
+      } catch (error) {
+        return [];
+      }
     }
 
     function saveLeaderboard(scores) {
@@ -683,11 +687,11 @@
       const name = playerNameInput.value.trim() || "Anonymous";
       const scores = getLeaderboard();
       scores.push({ name, score, date: new Date().toLocaleDateString() });
-      scores.sort((a, b) => b.score - a.score);
+      scores.sort(function (a, b) {
+        return b.score - a.score;
+      });
       saveLeaderboard(scores.slice(0, 10));
-      startSongDeck();
-    updateScoreboard();
-    renderLeaderboard();
+      renderLeaderboard();
     }
 
     function renderLeaderboard() {
@@ -695,11 +699,11 @@
       leaderboardBody.innerHTML = "";
 
       if (scores.length === 0) {
-        leaderboardBody.innerHTML = `<tr><td colspan="4">No scores saved yet.</td></tr>`;
+        leaderboardBody.innerHTML = '<tr><td colspan="4">No scores saved yet.</td></tr>';
         return;
       }
 
-      scores.forEach((entry, index) => {
+      scores.forEach(function (entry, index) {
         const row = document.createElement("tr");
         row.innerHTML = `<td>${index + 1}</td><td>${escapeHtml(entry.name)}</td><td>${entry.score}</td><td>${entry.date}</td>`;
         leaderboardBody.appendChild(row);
@@ -717,21 +721,27 @@
       return div.innerHTML;
     }
 
-    newRoundBtn.addEventListener("click", () => {
-      if (gameOver) {
-        resetGame();
-      } else {
-        newRound();
-      }
+    newRoundBtn.addEventListener("click", function () {
+      if (gameOver) startNewGame();
+      else newRound();
     });
-    playClipBtn.addEventListener("click", () => playOneSecond(false));
-    replayClipBtn.addEventListener("click", () => playOneSecond(true));
+
+    playClipBtn.addEventListener("click", function () {
+      playOneSecond(false);
+    });
+
+    replayClipBtn.addEventListener("click", function () {
+      playOneSecond(true);
+    });
+
     revealBtn.addEventListener("click", revealAnswer);
     saveScoreBtn.addEventListener("click", saveScore);
-    resetGameBtn.addEventListener("click", resetGame);
+    resetGameBtn.addEventListener("click", startNewGame);
     clearScoresBtn.addEventListener("click", clearScores);
 
+    updateScoreboard();
     renderLeaderboard();
+    loadYouTubeApi();
   </script>
 </body>
 </html>
